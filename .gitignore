@@ -1,0 +1,24 @@
+# Build directories
+build/
+Builds/
+cmake-build-*/
+
+# JUCE / Projucer artifacts
+JuceLibraryCode/
+*.jucer.bak
+
+# IDE
+.vscode/
+.idea/
+*.xcodeproj/
+!*.xcodeproj/project.pbxproj
+xcuserdata/
+DerivedData/
+compile_commands.json
+.cache/
+
+# macOS
+.DS_Store
+
+# Misc
+*.log
