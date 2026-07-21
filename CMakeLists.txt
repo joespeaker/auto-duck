@@ -14,6 +14,14 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(JUCE)
 
+# DAW-free interactive testing: build JUCE's AudioPluginHost, a minimal host
+# that can load the plugin and route any input (mic, another plugin) to the
+# sidechain bus.
+option(AUTODUCK_BUILD_PLUGINHOST "Build JUCE's AudioPluginHost for DAW-free testing" OFF)
+if(AUTODUCK_BUILD_PLUGINHOST)
+    add_subdirectory("${juce_SOURCE_DIR}/extras/AudioPluginHost" AudioPluginHost)
+endif()
+
 set(AUTODUCK_FORMATS VST3 Standalone)
 if(APPLE)
     list(PREPEND AUTODUCK_FORMATS AU)
