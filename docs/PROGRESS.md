@@ -32,6 +32,9 @@ Living status document. Update this as work lands.
 - [x] State save/restore (APVTS XML).
 - [x] Factory preset system via host programs: Init, Hard Cutoff, Trance Gate, Subtle Duck.
 - [x] GitHub Actions CI: macOS build (AU + VST3, artifacts uploaded) and Linux compile check.
+- [x] DSP smoke tests (`tools/dsp_smoke_test.cpp`, run in Linux CI): duck/invert gain mapping,
+      true-zero output at full depth, −12 dB partial depth accuracy, hold anti-chatter timing,
+      and lookahead latency reporting all verified against the real processor offline.
 - [x] **Custom UI (Phase 4, first pass)** — `Source/ui/`:
   - [x] Robot duck mascot drawn programmatically (`DuckMascot`), amber/metal styling.
   - [x] Head dips and tilts with gain reduction in real time (30 Hz UI timer reading the

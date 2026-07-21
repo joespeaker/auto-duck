@@ -60,9 +60,24 @@ target_link_libraries(AutoDuck
         juce::juce_recommended_warning_flags
 )
 
-# Dev-only helper: renders the mascot to PNGs for headless UI review.
-option(AUTODUCK_BUILD_TOOLS "Build dev tools (mascot renderer)" OFF)
+# Dev-only helpers: DSP smoke test + mascot/editor PNG renderer for headless review.
+option(AUTODUCK_BUILD_TOOLS "Build dev tools (DSP smoke test, mascot renderer)" OFF)
 if(AUTODUCK_BUILD_TOOLS)
+    juce_add_console_app(DspSmokeTest PRODUCT_NAME "DspSmokeTest")
+    target_sources(DspSmokeTest PRIVATE
+        tools/dsp_smoke_test.cpp
+        Source/PluginProcessor.cpp
+        Source/PluginEditor.cpp
+        Source/ui/DuckMascot.cpp)
+    target_compile_definitions(DspSmokeTest PRIVATE
+        JUCE_WEB_BROWSER=0
+        JUCE_USE_CURL=0
+        JucePlugin_Name="Auto-Duck")
+    target_link_libraries(DspSmokeTest PRIVATE
+        juce::juce_audio_utils
+        juce::juce_dsp
+        PUBLIC juce::juce_recommended_config_flags)
+
     juce_add_gui_app(MascotRender PRODUCT_NAME "MascotRender")
     target_sources(MascotRender PRIVATE
         tools/render_mascot.cpp

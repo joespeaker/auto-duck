@@ -97,6 +97,7 @@ bool AutoDuckAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts)
 
 void AutoDuckAudioProcessor::prepareToPlay (double sampleRate, int)
 {
+    currentSampleRate = sampleRate;
     envelope.prepare (sampleRate);
     gate.prepare (sampleRate);
 
@@ -119,7 +120,7 @@ void AutoDuckAudioProcessor::updateLookahead()
 {
     const int newLookahead = juce::jlimit (
         0, delayBufferLength - 1,
-        static_cast<int> (0.001 * lookaheadParam->load() * getSampleRate()));
+        static_cast<int> (0.001 * lookaheadParam->load() * currentSampleRate));
 
     if (newLookahead != lookaheadSamples)
     {

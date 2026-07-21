@@ -49,6 +49,7 @@ private:
     autoduck::GateEngine gate;
 
     juce::AudioBuffer<float> delayBuffer;
+    double currentSampleRate = 44100.0;
     int delayBufferLength = 0;
     int delayWritePos = 0;
     int lookaheadSamples = 0;
