@@ -2,6 +2,7 @@
 
 #include <juce_audio_processors/juce_audio_processors.h>
 
+#include "ParameterIDs.h"
 #include "dsp/EnvelopeFollower.h"
 #include "dsp/GateEngine.h"
 

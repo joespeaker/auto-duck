@@ -2,7 +2,7 @@
 
 Living status document. Update this as work lands.
 
-**Last updated:** 2026-07-21 (groundwork pass)
+**Last updated:** 2026-07-21 (groundwork + custom UI first pass)
 
 ## Phase overview
 
@@ -11,7 +11,7 @@ Living status document. Update this as work lands.
 | 1. Groundwork — repo, docs, CMake/JUCE project, buses, parameters | ✅ Done |
 | 2. Core DSP — envelope follower, gate engine, lookahead, presets | ✅ Done (needs listening tests on real hardware) |
 | 3. Validation — macOS CI build, `auval`, Logic Pro smoke test | 🔶 CI in place; `auval`/Logic pending (needs a Mac) |
-| 4. Custom UI — robot duck mascot, real-time pose, mode visuals, trigger light | ⬜ Not started (generic JUCE editor in place as placeholder) |
+| 4. Custom UI — robot duck mascot, real-time pose, mode visuals, trigger light | ✅ Done (first pass, programmatic artwork) |
 | 5. Polish — final artwork, resizing, manual/screenshots, versioning | ⬜ Not started |
 
 ## Done
@@ -32,18 +32,25 @@ Living status document. Update this as work lands.
 - [x] State save/restore (APVTS XML).
 - [x] Factory preset system via host programs: Init, Hard Cutoff, Trance Gate, Subtle Duck.
 - [x] GitHub Actions CI: macOS build (AU + VST3, artifacts uploaded) and Linux compile check.
+- [x] **Custom UI (Phase 4, first pass)** — `Source/ui/`:
+  - [x] Robot duck mascot drawn programmatically (`DuckMascot`), amber/metal styling.
+  - [x] Head dips and tilts with gain reduction in real time (30 Hz UI timer reading the
+        gate engine's atomics), with smoothed motion.
+  - [x] Invert mode flips the duck horizontally and switches the accent color amber → cyan;
+        header shows DUCK MODE / INVERT MODE.
+  - [x] Trigger indicator: red antenna lamp + eye glow while the sidechain is above threshold.
+  - [x] Custom rotary knobs (`AutoDuckLookAndFeel`) for the six continuous parameters with
+        value readouts, plus an INVERT toggle button.
+  - [x] Headless UI review tool (`tools/render_mascot.cpp`, `-DAUTODUCK_BUILD_TOOLS=ON`)
+        rendering mascot poses and the full editor to PNG under xvfb.
 
 ## Pending
 
 - [ ] Run `auval -v aufx Adck Jspk` and a Logic Pro smoke test on real macOS hardware.
 - [ ] Listening tests: verify attack/release feel, hold anti-chatter behavior on choppy
       sidechain material, and confirm full-mute is truly silent end-to-end.
-- [ ] **Custom UI (Phase 4):**
-  - [ ] Robot duck mascot centerpiece (programmatic drawing or artwork).
-  - [ ] Duck pose follows gain reduction in real time (head dips as reduction increases).
-  - [ ] Visual Duck/Invert distinction (orientation flip or color/lighting change).
-  - [ ] Trigger indicator light on threshold crossing.
-  - [ ] Knob layout for the six continuous parameters + Invert toggle.
+- [ ] UI polish (Phase 5): resizable editor, hover/focus states on knobs, possible dedicated
+      artwork to replace the programmatic mascot, sidechain level meter.
 - [ ] Decide on a license for the repository.
 - [ ] Company/manufacturer identity: currently `Joe Speaker` / codes `Jspk`/`Adck` — confirm or change
       **before** first release (changing plugin codes later breaks existing DAW sessions).
