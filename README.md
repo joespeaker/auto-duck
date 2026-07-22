@@ -36,7 +36,9 @@ xattr -dr com.apple.quarantine ~/Library/Audio/Plug-Ins/Components/Auto-Duck.com
 xattr -dr com.apple.quarantine ~/Library/Audio/Plug-Ins/VST3/Auto-Duck.vst3
 ```
 
-Releases are cut by pushing a `v*` tag; CI builds and attaches the zips automatically.
+Releases are cut by pushing a `v*` tag (e.g. `git tag v0.1.0 && git push origin v0.1.0`) or by
+running the **Release** workflow manually from the Actions tab with a tag name; CI builds the
+plugins on macOS and attaches the zips automatically.
 
 ## Building
 
