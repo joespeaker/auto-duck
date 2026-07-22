@@ -32,6 +32,8 @@ Living status document. Update this as work lands.
 - [x] State save/restore (APVTS XML).
 - [x] Factory preset system via host programs: Init, Hard Cutoff, Trance Gate, Subtle Duck.
 - [x] GitHub Actions CI: macOS build (AU + VST3, artifacts uploaded) and Linux compile check.
+- [x] Release workflow: pushing a `v*` tag builds AU + VST3 on macOS and publishes them as
+      zips on the GitHub Releases page (unsigned; quarantine-clearing instructions included).
 - [x] DSP smoke tests (`tools/dsp_smoke_test.cpp`, run in Linux CI): duck/invert gain mapping,
       true-zero output at full depth, −12 dB partial depth accuracy, hold anti-chatter timing,
       and lookahead latency reporting all verified against the real processor offline.

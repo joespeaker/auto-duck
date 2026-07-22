@@ -1,0 +1,52 @@
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Build and publish macOS release
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure
+        run: cmake -B build -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build
+        run: cmake --build build --config Release --parallel 3
+
+      - name: Package plugins
+        run: |
+          cd build/AutoDuck_artefacts/Release
+          ditto -c -k --keepParent "AU/Auto-Duck.component" "Auto-Duck-${{ github.ref_name }}-macOS-AU.zip"
+          ditto -c -k --keepParent "VST3/Auto-Duck.vst3" "Auto-Duck-${{ github.ref_name }}-macOS-VST3.zip"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          prerelease: ${{ contains(github.ref_name, '-') }}
+          files: |
+            build/AutoDuck_artefacts/Release/Auto-Duck-${{ github.ref_name }}-macOS-AU.zip
+            build/AutoDuck_artefacts/Release/Auto-Duck-${{ github.ref_name }}-macOS-VST3.zip
+          body: |
+            ## Auto-Duck ${{ github.ref_name }} (macOS)
+
+            Sidechain-triggered gate plugin. Downloads:
+            - **AU** (`Auto-Duck.component`) — for Logic Pro; unzip into `~/Library/Audio/Plug-Ins/Components/`
+            - **VST3** (`Auto-Duck.vst3`) — for other DAWs; unzip into `~/Library/Audio/Plug-Ins/VST3/`
+
+            These builds are **unsigned and not notarized**, so macOS quarantines downloaded copies.
+            After copying, clear the quarantine flag and rescan:
+
+            ```sh
+            xattr -dr com.apple.quarantine ~/Library/Audio/Plug-Ins/Components/Auto-Duck.component
+            xattr -dr com.apple.quarantine ~/Library/Audio/Plug-Ins/VST3/Auto-Duck.vst3
+            killall -9 AudioComponentRegistrar 2>/dev/null; auval -v aufx Adck Jspk
+            ```
+
+            See the README for usage and the full parameter reference.

@@ -24,6 +24,20 @@ See [docs/REQUIREMENTS.md](docs/REQUIREMENTS.md) for the full specification and
 | Lookahead | 0 ms … 20 ms | Pre-empts transients; adds reported latency |
 | Invert | on/off | Flips Duck mode ↔ Invert mode |
 
+## Installing from Releases
+
+Prebuilt macOS binaries are published on the [Releases page](https://github.com/joespeaker/auto-duck/releases):
+download the AU and/or VST3 zip, unzip, and copy into your plugin folder
+(`~/Library/Audio/Plug-Ins/Components/` for AU, `~/Library/Audio/Plug-Ins/VST3/` for VST3).
+The builds are unsigned, so clear the quarantine flag after copying:
+
+```sh
+xattr -dr com.apple.quarantine ~/Library/Audio/Plug-Ins/Components/Auto-Duck.component
+xattr -dr com.apple.quarantine ~/Library/Audio/Plug-Ins/VST3/Auto-Duck.vst3
+```
+
+Releases are cut by pushing a `v*` tag; CI builds and attaches the zips automatically.
+
 ## Building
 
 Requires CMake ≥ 3.22 and a C++17 compiler. JUCE is fetched automatically via CMake FetchContent.
