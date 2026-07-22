@@ -3,9 +3,17 @@ name: Release
 on:
   push:
     tags: ["v*"]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Release tag (e.g. v0.1.0); created at the dispatched commit if it doesn't exist"
+        required: true
 
 permissions:
   contents: write
+
+env:
+  RELEASE_TAG: ${{ inputs.tag || github.ref_name }}
 
 jobs:
   release:
@@ -23,18 +31,20 @@ jobs:
       - name: Package plugins
         run: |
           cd build/AutoDuck_artefacts/Release
-          ditto -c -k --keepParent "AU/Auto-Duck.component" "Auto-Duck-${{ github.ref_name }}-macOS-AU.zip"
-          ditto -c -k --keepParent "VST3/Auto-Duck.vst3" "Auto-Duck-${{ github.ref_name }}-macOS-VST3.zip"
+          ditto -c -k --keepParent "AU/Auto-Duck.component" "Auto-Duck-${{ env.RELEASE_TAG }}-macOS-AU.zip"
+          ditto -c -k --keepParent "VST3/Auto-Duck.vst3" "Auto-Duck-${{ env.RELEASE_TAG }}-macOS-VST3.zip"
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          prerelease: ${{ contains(github.ref_name, '-') }}
+          tag_name: ${{ env.RELEASE_TAG }}
+          target_commitish: ${{ github.sha }}
+          prerelease: ${{ contains(env.RELEASE_TAG, '-') }}
           files: |
-            build/AutoDuck_artefacts/Release/Auto-Duck-${{ github.ref_name }}-macOS-AU.zip
-            build/AutoDuck_artefacts/Release/Auto-Duck-${{ github.ref_name }}-macOS-VST3.zip
+            build/AutoDuck_artefacts/Release/Auto-Duck-${{ env.RELEASE_TAG }}-macOS-AU.zip
+            build/AutoDuck_artefacts/Release/Auto-Duck-${{ env.RELEASE_TAG }}-macOS-VST3.zip
           body: |
-            ## Auto-Duck ${{ github.ref_name }} (macOS)
+            ## Auto-Duck ${{ env.RELEASE_TAG }} (macOS)
 
             Sidechain-triggered gate plugin. Downloads:
             - **AU** (`Auto-Duck.component`) — for Logic Pro; unzip into `~/Library/Audio/Plug-Ins/Components/`
