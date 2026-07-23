@@ -31,6 +31,12 @@ jobs:
       - name: Package plugins
         run: |
           cd build/AutoDuck_artefacts/Release
+          # Ad-hoc sign the final bundles: macOS on Apple Silicon refuses to
+          # load fully unsigned code, and lipo'd universal binaries don't keep
+          # the linker's automatic ad-hoc signature.
+          codesign --force --deep -s - "AU/Auto-Duck.component"
+          codesign --force --deep -s - "VST3/Auto-Duck.vst3"
+          lipo -info "AU/Auto-Duck.component/Contents/MacOS/Auto-Duck"
           ditto -c -k --keepParent "AU/Auto-Duck.component" "Auto-Duck-${{ env.RELEASE_TAG }}-macOS-AU.zip"
           ditto -c -k --keepParent "VST3/Auto-Duck.vst3" "Auto-Duck-${{ env.RELEASE_TAG }}-macOS-VST3.zip"
 
