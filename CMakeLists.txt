@@ -1,6 +1,13 @@
 cmake_minimum_required(VERSION 3.22)
 
-project(AutoDuck VERSION 0.1.0)
+# Distribution builds must run on any Mac: universal binaries (Intel + Apple
+# Silicon) with an explicit minimum macOS version. Must be set before project().
+if(APPLE)
+    set(CMAKE_OSX_ARCHITECTURES "x86_64;arm64" CACHE STRING "")
+    set(CMAKE_OSX_DEPLOYMENT_TARGET "11.0" CACHE STRING "")
+endif()
+
+project(AutoDuck VERSION 0.1.1)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
