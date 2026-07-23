@@ -1,0 +1,62 @@
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Release tag (e.g. v0.1.0); created at the dispatched commit if it doesn't exist"
+        required: true
+
+permissions:
+  contents: write
+
+env:
+  RELEASE_TAG: ${{ inputs.tag || github.ref_name }}
+
+jobs:
+  release:
+    name: Build and publish macOS release
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure
+        run: cmake -B build -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build
+        run: cmake --build build --config Release --parallel 3
+
+      - name: Package plugins
+        run: |
+          cd build/AutoDuck_artefacts/Release
+          ditto -c -k --keepParent "AU/Auto-Duck.component" "Auto-Duck-${{ env.RELEASE_TAG }}-macOS-AU.zip"
+          ditto -c -k --keepParent "VST3/Auto-Duck.vst3" "Auto-Duck-${{ env.RELEASE_TAG }}-macOS-VST3.zip"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ env.RELEASE_TAG }}
+          target_commitish: ${{ github.sha }}
+          prerelease: ${{ contains(env.RELEASE_TAG, '-') }}
+          files: |
+            build/AutoDuck_artefacts/Release/Auto-Duck-${{ env.RELEASE_TAG }}-macOS-AU.zip
+            build/AutoDuck_artefacts/Release/Auto-Duck-${{ env.RELEASE_TAG }}-macOS-VST3.zip
+          body: |
+            ## Auto-Duck ${{ env.RELEASE_TAG }} (macOS)
+
+            Sidechain-triggered gate plugin. Downloads:
+            - **AU** (`Auto-Duck.component`) — for Logic Pro; unzip into `~/Library/Audio/Plug-Ins/Components/`
+            - **VST3** (`Auto-Duck.vst3`) — for other DAWs; unzip into `~/Library/Audio/Plug-Ins/VST3/`
+
+            These builds are **unsigned and not notarized**, so macOS quarantines downloaded copies.
+            After copying, clear the quarantine flag and rescan:
+
+            ```sh
+            xattr -dr com.apple.quarantine ~/Library/Audio/Plug-Ins/Components/Auto-Duck.component
+            xattr -dr com.apple.quarantine ~/Library/Audio/Plug-Ins/VST3/Auto-Duck.vst3
+            killall -9 AudioComponentRegistrar 2>/dev/null; auval -v aufx Adck Jspk
+            ```
+
+            See the README for usage and the full parameter reference.
